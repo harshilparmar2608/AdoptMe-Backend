@@ -1,0 +1,56 @@
+-- Database schema migration file for initial schema
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE trees (
+    id SERIAL PRIMARY KEY,
+    species VARCHAR(255) NOT NULL,
+    age INT NOT NULL,
+    location VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE adoptions (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    tree_id INT REFERENCES trees(id) ON DELETE CASCADE,
+    adoption_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50) DEFAULT 'active'
+);
+
+CREATE TABLE health_reports (
+    id SERIAL PRIMARY KEY,
+    tree_id INT REFERENCES trees(id) ON DELETE CASCADE,
+    report_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    health_status VARCHAR(255),
+    notes TEXT
+);
+
+CREATE TABLE care_logs (
+    id SERIAL PRIMARY KEY,
+    adoption_id INT REFERENCES adoptions(id) ON DELETE CASCADE,
+    log_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    care_action VARCHAR(255),
+    notes TEXT
+);
+
+CREATE TABLE badges (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT
+);
+
+CREATE TABLE user_badges (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    badge_id INT REFERENCES badges(id) ON DELETE CASCADE,
+    awarded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
